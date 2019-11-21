@@ -24,6 +24,7 @@ public class GlobalState {
 	// the number of people staying in the line
 	public volatile static int numberOfDelayedMen = 0;
 	public volatile static int numberOfDelayedWomen = 0;
+	// Tjena
 
 	// The main is only present to start the processes
 	public static void main(String argv[]) {
