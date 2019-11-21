@@ -40,6 +40,4 @@ public class AndrewsSemaphore {
 	public void V() {
 		this.semaphore.release();
 	}
-
-
 }

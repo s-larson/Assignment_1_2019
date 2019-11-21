@@ -38,7 +38,7 @@ public class GlobalState {
 		lor.addAll(IntStream.range(0,totalNumberOfWomen).mapToObj(i -> new Woman()).collect(Collectors.toList()));
 
 		// create an array of AndrewsProcess of the runnables
-		AndrewsProcess[] processes = (AndrewsProcess[]) lor.stream().map(r -> new AndrewsProcess(r)).toArray();
+		AndrewsProcess[] processes = (AndrewsProcess[]) lor.stream().map(r -> new AndrewsProcess(r)).toArray(AndrewsProcess[]::new);
 		
 		// start the processes
 		AndrewsProcess.startAndrewsProcesses(processes);

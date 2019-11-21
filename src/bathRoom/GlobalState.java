@@ -1,6 +1,7 @@
 package bathRoom;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,7 +25,12 @@ public class GlobalState {
 	// the number of people staying in the line
 	public volatile static int numberOfDelayedMen = 0;
 	public volatile static int numberOfDelayedWomen = 0;
-	// Tjena
+	
+	// semaphores for each gender
+	public static AndrewsSemaphore semMan = new AndrewsSemaphore(1);
+	public static AndrewsSemaphore semWoman = new AndrewsSemaphore(1); 
+	public static AndrewsSemaphore semMutex = new AndrewsSemaphore(1);
+
 
 	// The main is only present to start the processes
 	public static void main(String argv[]) {
@@ -37,9 +43,20 @@ public class GlobalState {
 		lor.addAll(IntStream.range(0,totalNumberOfWomen).mapToObj(i -> new Woman()).collect(Collectors.toList()));
 
 		// create an array of AndrewsProcess of the runnables
-		AndrewsProcess[] processes = (AndrewsProcess[]) lor.stream().map(r -> new AndrewsProcess(r)).toArray();
+		AndrewsProcess[] processes = (AndrewsProcess[]) lor.stream().map(r -> new AndrewsProcess(r)).toArray(AndrewsProcess[]::new);
 		
 		// start the processes
 		AndrewsProcess.startAndrewsProcesses(processes);
+	}
+	public static void signal() {
+		if(GlobalState.numberOfMenInCS == 0) {
+			GlobalState.semWoman.V();
+		}
+		else if(GlobalState.numberOfWomenInCS == 0) {
+			GlobalState.semMan.V();
+		}
+		else if(GlobalState.numberOfMenInCS > 0 || GlobalState.numberOfWomenInCS > 0 ) {
+			GlobalState.semMutex.V();
+		}
 	}
 }

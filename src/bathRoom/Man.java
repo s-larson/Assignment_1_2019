@@ -9,11 +9,42 @@ public class Man implements Runnable,IUnisexBathroomActorProcess {
 	@Override
 	public void run() {
 		while (true) {
-			// fill functionality here
 			
+			GlobalState.semMutex.P();
 			
+			if(GlobalState.numberOfMenInCS > 0) {
+				GlobalState.semMutex.V();
+				GlobalState.semMan.P();
+			}
 			
+			printState();
 			
+			GlobalState.numberOfMenInCS++;
+			GlobalState.signal();
+			
+			doThings();
+			
+			GlobalState.semMutex.P();
+			GlobalState.numberOfMenInCS--;
+			GlobalState.signal();
+			
+			/*
+			GlobalState.semMutex.P();
+			if(GlobalState.numberOfWomenInCS == 0) {
+				if(GlobalState.numberOfMenInCS == 0) {
+					GlobalState.semMan.P();
+				}
+				GlobalState.numberOfMenInCS++;
+				printState();
+				// Critical section
+				this.doThings();
+				// Exit protocol
+				GlobalState.numberOfMenInCS--;
+				if(GlobalState.numberOfMenInCS == 0) {
+					GlobalState.semMan.V();
+				}
+			}
+			*/
 		}
 	}
 
