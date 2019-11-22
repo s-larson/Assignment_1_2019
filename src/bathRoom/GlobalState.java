@@ -36,12 +36,10 @@ public class GlobalState {
 	public static void signal() {
 		if(GlobalState.numberOfMenInCS == 0 && GlobalState.numberOfDelayedWomen > 0) {
 			--GlobalState.numberOfDelayedWomen;
-			System.out.println("unlocked women");
 			GlobalState.semWoman.V();
 		}
 		else if(GlobalState.numberOfWomenInCS == 0 && GlobalState.numberOfDelayedMen > 0) {
 			--GlobalState.numberOfDelayedMen;
-			System.out.println("unlocked men");
 			GlobalState.semMan.V();
 		}
 		else {
