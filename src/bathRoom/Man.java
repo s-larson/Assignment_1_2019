@@ -9,21 +9,47 @@ public class Man implements Runnable, IUnisexBathroomActorProcess {
 	@Override
 	public void run() {
 		while (true) {
+			// fill functionality here
+
+			GlobalState.semMutex.P();
+			printState();
+			if(GlobalState.numberOfWomenInCS > 0) {
+				GlobalState.numberOfDelayedMen++;
+				GlobalState.semMutex.V();
+				GlobalState.semMan.P();
+			}
+			GlobalState.numberOfMenInCS++;
+			GlobalState.signal();
+
 			doThings();
+
+			GlobalState.semMutex.P();
+			GlobalState.numberOfMenInCS--;
+			GlobalState.signal();
+
+			/*
 			GlobalState.semMutex.P();
 			if(GlobalState.numberOfWomenInCS == 0) {
+				if(GlobalState.numberOfMenInCS == 0) {
+					GlobalState.semMan.P();
+				}
 				GlobalState.numberOfMenInCS++;
-				GlobalState.semMutex.V();
-				doThings();
 				printState();
-				GlobalState.semMutex.P();
+				// Critical section
+				this.doThings();
+				// Exit protocol
 				GlobalState.numberOfMenInCS--;
-				GlobalState.semMutex.V();
-			}else {
-				GlobalState.semMutex.V();
+				if(GlobalState.numberOfMenInCS == 0) {
+					GlobalState.semMan.V();
+				}
 			}
+			*/
 		}
 	}
+	/*
+	 * 
+	 * 
+	 */
 
 
 	@Override
@@ -35,7 +61,7 @@ public class Man implements Runnable, IUnisexBathroomActorProcess {
 	@Override
 	public void doThings() {
 		AndrewsProcess.uninterruptibleMinimumDelay(ThreadLocalRandom.current()
-				.nextInt(100, 500));
+				.nextInt(100, 1000));
 	}
 	
 

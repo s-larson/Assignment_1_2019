@@ -9,19 +9,22 @@ public class Woman implements Runnable, IUnisexBathroomActorProcess {
 	@Override
 	public void run() {
 		while (true) {
-			doThings();
 			GlobalState.semMutex.P();
-			if(GlobalState.numberOfMenInCS == 0) {
-				GlobalState.numberOfWomenInCS++;
+			printState();
+			if(GlobalState.numberOfMenInCS > 0) {
+				GlobalState.numberOfDelayedWomen++;
 				GlobalState.semMutex.V();
-				doThings();
-				printState();
-				GlobalState.semMutex.P();
-				GlobalState.numberOfWomenInCS--;
-				GlobalState.semMutex.V();
-			}else {
-				GlobalState.semMutex.V();
+				GlobalState.semWoman.P();
 			}
+			GlobalState.numberOfWomenInCS++;
+			GlobalState.signal();
+
+			doThings();
+			
+			
+			GlobalState.semMutex.P();
+			GlobalState.numberOfWomenInCS--;
+			GlobalState.signal();
 		}
 	}
 
@@ -35,7 +38,7 @@ public class Woman implements Runnable, IUnisexBathroomActorProcess {
 	@Override
 	public void doThings() {
 		AndrewsProcess.uninterruptibleMinimumDelay(ThreadLocalRandom.current()
-				.nextInt(100, 500));
+				.nextInt(100, 200));
 	}
 	
 	@Override
