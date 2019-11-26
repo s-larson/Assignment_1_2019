@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import bathRoom.Man;
-import bathRoom.Woman;
+import limitedBathRoom.Man;
+import limitedBathRoom.Woman;
 import se.his.iit.it325g.common.AndrewsProcess;
 import se.his.iit.it325g.common.AndrewsSemaphore;
 
@@ -16,10 +16,13 @@ import se.his.iit.it325g.common.AndrewsSemaphore;
 
 public class GlobalState {
 	/* insert necessary semaphores here! */
-
+	public static AndrewsSemaphore semMan = new AndrewsSemaphore(0);
+	public static AndrewsSemaphore semWoman = new AndrewsSemaphore(0); 
+	public static AndrewsSemaphore semMutex = new AndrewsSemaphore(1);
+	
 	// adjusts the number of total processes
-	public volatile static int totalNumberOfWomen = 2;
-	public volatile static int totalNumberOfMen = 2;
+	public volatile static int totalNumberOfWomen = 8;
+	public volatile static int totalNumberOfMen = 8;
 	// the number of people in the bathroom
 	public volatile static int numberOfWomenInCS = 0;
 	public volatile static int numberOfMenInCS = 0;
@@ -42,5 +45,18 @@ public class GlobalState {
 		
 		// start the processes
 		AndrewsProcess.startAndrewsProcesses(processes);
+	}
+	public static void signal() {
+		if(GlobalState.numberOfMenInCS == 0 && GlobalState.numberOfDelayedWomen > 0 && GlobalState.numberOfWomenInCS < 4) {
+			--GlobalState.numberOfDelayedWomen;
+			GlobalState.semWoman.V();
+		}
+		else if(GlobalState.numberOfWomenInCS == 0 && GlobalState.numberOfDelayedMen > 0 && GlobalState.numberOfMenInCS < 4) {
+			--GlobalState.numberOfDelayedMen;
+			GlobalState.semMan.V();
+		}
+		else {
+			GlobalState.semMutex.V();
+		}
 	}
 }

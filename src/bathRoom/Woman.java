@@ -8,6 +8,7 @@ public class Woman implements Runnable, IUnisexBathroomActorProcess {
 
 	@Override
 	public void run() {
+		System.out.println("YAS");
 		while (true) {
 			doThings();
 			GlobalState.semMutex.P();

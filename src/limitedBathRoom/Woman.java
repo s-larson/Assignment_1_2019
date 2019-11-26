@@ -1,6 +1,7 @@
 package limitedBathRoom;
 import java.util.concurrent.ThreadLocalRandom;
 
+import bathRoom.GlobalState;
 import common.IUnisexBathroomActorProcess;
 import se.his.iit.it325g.common.AndrewsProcess;
 
@@ -9,11 +10,22 @@ public class Woman implements Runnable, IUnisexBathroomActorProcess {
 	@Override
 	public void run() {
 		while (true) {
-			// fill functionality here
+			doThings();
+			GlobalState.semMutex.P();
+			if(GlobalState.numberOfMenInCS > 0 || GlobalState.numberOfWomenInCS > 3) {
+				GlobalState.numberOfDelayedWomen++;
+				GlobalState.semMutex.V();
+				GlobalState.semWoman.P();
+			}
+			GlobalState.numberOfWomenInCS++;
+			GlobalState.signal();
+
+			doThings();
+			printState();
 			
-			
-			
-			
+			GlobalState.semMutex.P();
+			GlobalState.numberOfWomenInCS--;
+			GlobalState.signal();		
 		}
 	}
 

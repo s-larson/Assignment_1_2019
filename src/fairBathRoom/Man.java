@@ -6,39 +6,56 @@ import se.his.iit.it325g.common.AndrewsProcess;
 
 public class Man implements Runnable, IUnisexBathroomActorProcess {
 
-	@Override
-	public void run() {
-		while (true) {
-			// fill functionality here
-			
-			
-			
-			
-		}
-	}
+    @Override
+    public void run() {
+        while (true) {
+        	GlobalState.semOrder.P();
+            GlobalState.semMutex.P();
+            if(GlobalState.numberOfWomenInCS > 0 || GlobalState.numberOfMenInCS>3) {
+                GlobalState.numberOfDelayedMen++;
+                GlobalState.semMutex.V();
+                GlobalState.semMan.P();
+            }
 
-	// printout on the global state
-	@Override
-	public  void printState() {
-		System.out.println(this);
-	}
+            GlobalState.numberOfMenInCS++;
+        	GlobalState.semOrder.V();
+            GlobalState.signal();
+            
+            doThings();
+            printState();
 
-	// represents that processes are staying in a state for a while
-	@Override
-	public void doThings() {
-		AndrewsProcess.uninterruptibleMinimumDelay(ThreadLocalRandom.current()
-				.nextInt(100, 500));
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "M " + AndrewsProcess.currentAndrewsProcessId()
-		+ "  in CS, state: nm:" + GlobalState.numberOfMenInCS + " nw:"
-		+ GlobalState.numberOfWomenInCS + " dm:"
-		+ GlobalState.numberOfDelayedMen + " dw:"
-		+ GlobalState.numberOfDelayedWomen;
-	}
+            GlobalState.semMutex.P();
+            GlobalState.numberOfMenInCS--;
+            GlobalState.signal();
+        }
+    }
+
+
+    @Override
+    public  void printState() {
+        System.out.println(this);
+    }
+
+
+    @Override
+    public void doThings() {
+        AndrewsProcess.uninterruptibleMinimumDelay(ThreadLocalRandom.current()
+                .nextInt(1, 5));
+    }
+
+
+    public void doThings2() {
+        AndrewsProcess.uninterruptibleMinimumDelay(ThreadLocalRandom.current()
+                .nextInt(10, 50));
+    }
+
+
+    @Override
+    public String toString() {
+        return "M " + AndrewsProcess.currentAndrewsProcessId()
+        + "  in CS, state: nm:" + GlobalState.numberOfMenInCS + " nw:"
+        + GlobalState.numberOfWomenInCS + " dm:"
+        + GlobalState.numberOfDelayedMen + " dw:"
+        + GlobalState.numberOfDelayedWomen;
+    }
 }
