@@ -21,8 +21,8 @@ public class GlobalState {
 	public static AndrewsSemaphore semMutex = new AndrewsSemaphore(1);
 	
 	// adjusts the number of total processes
-	public volatile static int totalNumberOfWomen = 8;
-	public volatile static int totalNumberOfMen = 8;
+	public volatile static int totalNumberOfWomen = 10;
+	public volatile static int totalNumberOfMen = 10;
 	// the number of people in the bathroom
 	public volatile static int numberOfWomenInCS = 0;
 	public volatile static int numberOfMenInCS = 0;
@@ -46,6 +46,10 @@ public class GlobalState {
 		// start the processes
 		AndrewsProcess.startAndrewsProcesses(processes);
 	}
+	// Unlock semaphore for either men, women, or shared mutex.
+	// If the last man leaves the bathroom and the number of women < 4, unlock for women
+	// If the last woman leaves the bathroom and the number of men < 4, unlock for men
+	// If neither is true, the process just entered the bathroom and will unlock shared mutex
 	public static void signal() {
 		if(GlobalState.numberOfMenInCS == 0 && GlobalState.numberOfDelayedWomen > 0 && GlobalState.numberOfWomenInCS < 4) {
 			--GlobalState.numberOfDelayedWomen;

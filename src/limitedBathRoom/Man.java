@@ -10,9 +10,11 @@ public class Man implements Runnable, IUnisexBathroomActorProcess {
 	@Override
 	public void run() {
 		while (true) {
-			doThings();
-			
+			// Lock shared mutex before comparing values
 			GlobalState.semMutex.P();
+			// If any women exists in the bathroom, or there are more than 3 men,
+            // put the man as waiting and lock access for men
+			// If no women, occupy bathroom and unlock shared mutex
 			if(GlobalState.numberOfWomenInCS > 0 || GlobalState.numberOfMenInCS > 3) {
 				GlobalState.numberOfDelayedMen++;
 				GlobalState.semMutex.V();
@@ -21,9 +23,12 @@ public class Man implements Runnable, IUnisexBathroomActorProcess {
 			GlobalState.numberOfMenInCS++;
 			GlobalState.signal();
 			
+			// Delay
 			doThings();
 			printState();
-
+			
+			// Lock shared mutex, tell others you left the bathroom 
+			// Unlock a semaphore depending on bathroom's current state
 			GlobalState.semMutex.P();
 			GlobalState.numberOfMenInCS--;
 			GlobalState.signal();

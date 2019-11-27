@@ -8,11 +8,11 @@ public class Woman implements Runnable, IUnisexBathroomActorProcess {
 
 	@Override
 	public void run() {
-		System.out.println("YAS");
 		while (true) {
-			doThings();
-			GlobalState.semMutex.P();
-			printState();
+			// Lock shared mutex before comparing values
+			GlobalState.semMutex.P();		
+			// If any men exists in the bathroom, put the woman as waiting and lock access for women
+			// If no men, occupy bathroom and unlock shared mutex
 			if(GlobalState.numberOfMenInCS > 0) {
 				GlobalState.numberOfDelayedWomen++;
 				GlobalState.semMutex.V();
@@ -20,9 +20,13 @@ public class Woman implements Runnable, IUnisexBathroomActorProcess {
 			}
 			GlobalState.numberOfWomenInCS++;
 			GlobalState.signal();
-
-			doThings();
 			
+			// Delay
+			doThings();
+			printState();
+			
+			// Lock shared mutex, tell others you left the bathroom, 
+			// and unlock a semaphore depending on bathroom's current state
 			GlobalState.semMutex.P();
 			GlobalState.numberOfWomenInCS--;
 			GlobalState.signal();

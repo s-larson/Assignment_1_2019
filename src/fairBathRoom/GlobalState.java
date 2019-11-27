@@ -33,6 +33,10 @@ public class GlobalState {
 		AndrewsProcess.startAndrewsProcesses(processes);
 	}
 	
+	// Unlock semaphore for either men, women, or shared mutex.
+	// If the last man leaves the bathroom and the number of women < 4, unlock for women
+	// If the last woman leaves the bathroom and the number of men < 4, unlock for men
+	// If neither is true, the process just entered the bathroom and will unlock shared mutex
 	public static void signal() {
 		if(GlobalState.numberOfMenInCS == 0 && GlobalState.numberOfDelayedWomen > 0 &&  GlobalState.numberOfWomenInCS<4) {
 			--GlobalState.numberOfDelayedWomen;
