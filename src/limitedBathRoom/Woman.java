@@ -1,7 +1,6 @@
 package limitedBathRoom;
 import java.util.concurrent.ThreadLocalRandom;
 
-import bathRoom.GlobalState;
 import common.IUnisexBathroomActorProcess;
 import se.his.iit.it325g.common.AndrewsProcess;
 

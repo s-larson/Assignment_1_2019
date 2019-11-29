@@ -1,6 +1,6 @@
 package fairBathRoom;
 
-import java.util.ArrayList;
+	import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -18,8 +18,8 @@ public class GlobalState {
 	public static AndrewsSemaphore semMutex = new AndrewsSemaphore(1);
 	public static AndrewsSemaphore semOrder = new AndrewsSemaphore(1);
 	
-	public volatile static int totalNumberOfWomen = 8;
-	public volatile static int totalNumberOfMen = 8;
+	public volatile static int totalNumberOfWomen = 10;
+	public volatile static int totalNumberOfMen = 10;
 	public volatile static int numberOfWomenInCS = 0;
 	public volatile static int numberOfMenInCS = 0;
 	public volatile static int numberOfDelayedMen = 0;

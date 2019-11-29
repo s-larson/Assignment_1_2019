@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import limitedBathRoom.Man;
-import limitedBathRoom.Woman;
 import se.his.iit.it325g.common.AndrewsProcess;
 import se.his.iit.it325g.common.AndrewsSemaphore;
 
@@ -21,7 +19,7 @@ public class GlobalState {
 	public static AndrewsSemaphore semMutex = new AndrewsSemaphore(1);
 	
 	// adjusts the number of total processes
-	public volatile static int totalNumberOfWomen = 10;
+	public volatile static int totalNumberOfWomen = 1;
 	public volatile static int totalNumberOfMen = 10;
 	// the number of people in the bathroom
 	public volatile static int numberOfWomenInCS = 0;
